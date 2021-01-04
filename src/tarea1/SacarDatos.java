@@ -20,10 +20,10 @@ public class SacarDatos extends Thread {
 
      @Override
     public synchronized void run(){
-       
+       // se lanzan 15 llamadas al hilo
       
-        for (int i=0 ; i < 5; i++){
-            //System.out.println("Se extrae la letra  "+ i );
+        for (int i=0 ; i < 15; i++){
+            
             datos.saleDatos();
         }
        

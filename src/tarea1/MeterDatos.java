@@ -22,13 +22,12 @@ public class MeterDatos extends Thread{
 
     @Override
     public synchronized void run() { 
-        //... aqui hay que poner        
+        //... se lanzan 15 llamadas al hilo        
         
         
-        for (int i=0 ; i < 5; i++){
+        for (int i=0 ; i < 15; i++){
             
-            this.datos.meteDatos(letter);
-            //System.out.println("se meten datos "+i);
+            this.datos.meteDatos(letter);            
             
         }
          

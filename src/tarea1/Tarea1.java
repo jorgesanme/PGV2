@@ -11,21 +11,19 @@ package tarea1;
 public class Tarea1 {
 
     /**
-     * @param args the command line arguments
+     * @param args no recibe ningún parámetro
      */
     public static void main(String[] args) {
-        
+
         // se crea un objeto de la clase Modelo
-        Modelo modeloDatos = new Modelo();
-        
-        // se ejecutan los hilos entrando datos en el buffer
-        
-            Thread meterLetra = new MeterDatos(modeloDatos);     
-            Thread sacarLetra = new SacarDatos(modeloDatos);        
-            
-        
-            meterLetra.start();
-            sacarLetra.start();
+        Modelo modeloDatos = new Modelo(6);
+
+        // se Intancian y se ejecutan los hilos 
+        Thread meterLetra = new MeterDatos(modeloDatos);        
+        Thread sacarLetra = new SacarDatos(modeloDatos);
+
+        meterLetra.start();
+        sacarLetra.start();
     }
-    
+
 }

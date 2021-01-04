@@ -4,6 +4,7 @@
  */
 package tarea1;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,18 +16,19 @@ import java.util.logging.Logger;
 public class Modelo {
 
     // array que contendra los 6 valores posible del buffer
-    private char charBuffer[] = new char[6];
-
+    // con lista 
+    private final ArrayList<String> charBuffer;
     private boolean statusFull = false;
     private boolean statusEmpty = true;
     private int siguiente = 0;
 
-    public Modelo() {
+    public Modelo(int size) {
+        this.charBuffer = new ArrayList<>(size);
 
     }
 
-    public synchronized void meteDatos(String letter) {
-        //este metodo ingresa valores en el array
+    public  void meteDatos(String letter) {
+        //este metodo ingresa valores en el Buffer
         while (statusFull != false) {
             try {
                 wait();
@@ -34,49 +36,47 @@ public class Modelo {
                 Logger.getLogger(Modelo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        synchronized (charBuffer) {
+            String d = letter.substring(siguiente, siguiente + 1);
+            System.out.println("se meten la letra " + d);
+            charBuffer.add(d);
 
-        for (int i = 0; i <= 5; i++) {
-            char c = letter.charAt(siguiente);
-            System.out.println("se meten la letra " + c);
-            siguiente++;
-            charBuffer[i] = c;
-            notify();
-            if (charBuffer.length == 6) {
-                statusFull = true;
-            }
-
+            if (charBuffer.size() == 6) {
+                
+                charBuffer.notify();
+                statusFull = false;
+            } 
+            charBuffer.notify();
         }
+
+        siguiente++;
+
     }
 
-    public synchronized void saleDatos() {
+    public  void saleDatos() {
         //mientras el buffer este vacio se debe esperar.
-        while (statusEmpty != true) {
+        while (!statusEmpty ) {
             try {
                 wait();
             } catch (InterruptedException ex) {
                 Logger.getLogger(Modelo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
-        for (int i = 5; i >= 0; i--) {
-            char c = charBuffer[i];
-            System.out.println("Sacando letra " + c);
-            siguiente--;
-            //charBuffer[i] = c;
-
-            /*if (charBuffer.length == 0) {
-                statusFull = true;
-            }*/
-
-            siguiente--;
-
-            //Si buffer esta lleno, puedo coger datos        
-            if (siguiente == 0) {
+        //Si buffer esta lleno, puedo coger datos    
+        synchronized (charBuffer) {
+            int siguiente2 = charBuffer.size() - 1;
+            if (charBuffer.size() > 0) {
+                System.out.println("se casa la letra " + charBuffer.get(siguiente2));
+                charBuffer.remove(siguiente2);
+                charBuffer.notifyAll();
+            } else if (charBuffer.isEmpty()) {
+                charBuffer.notify();            
+            } else {
                 statusEmpty = false;
             }
-            notify();
+            charBuffer.notify();
             //se notifica el consumo de un carácter
-        }
-
+        }            
+        siguiente--;
     }
 }
